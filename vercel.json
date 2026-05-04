@@ -1,0 +1,128 @@
+{
+  "version": 2,
+  "functions": {
+    "app/api/workspace/[workspaceId]/generate-stories/route.ts": {
+      "maxDuration": 120
+    },
+    "app/api/workspace/[workspaceId]/sprints/create/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/workspace/[workspaceId]/stories/save/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/workspace/[workspaceId]/teams/[teamId]/members/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/workspace/[workspaceId]/teams/[teamId]/members/bulk/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/workers/heavy/route.ts": {
+      "maxDuration": 300
+    },
+    "app/api/workers/fast/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/workers/embeddings/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/workers/dlq/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "private, no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        },
+        {
+          "key": "Expires",
+          "value": "0"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    },
+    {
+      "source": "/((?!api/).*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        }
+      ]
+    },
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/xml"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400"
+        }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400"
+        }
+      ]
+    },
+    {
+      "source": "/site.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, s-maxage=604800"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/sitemap"
+    }
+  ]
+}

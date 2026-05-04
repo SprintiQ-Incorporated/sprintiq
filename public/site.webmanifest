@@ -1,0 +1,27 @@
+{
+  "name": "SprintiQ Turbo",
+  "short_name": "SprintiQ Turbo",
+  "description": "SprintiQ Turbo — agile planning for AI coding workflows",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/turbo/Turbo_logo_256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/turbo/Turbo_logo_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}

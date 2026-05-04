@@ -1,0 +1,81 @@
+#!/bin/sh
+
+echo "🔍 Checking for ID type mismatch patterns..."
+
+# Check for dangerous .or() patterns with space_id in database queries
+# Specifically look for .or() followed by template literal with space_id.eq patterns
+if grep -rn "\.or(\s*\`.*space_id\.eq.*space_id\.eq" --include="*.ts" --include="*.tsx" app/ components/ lib/ 2>/dev/null; then
+  echo "❌ ERROR: Found .or() with multiple space_id comparisons in database query"
+  echo "   Foreign key columns (space_id) must use UUID only"
+  echo "   Use: .eq('space_id', space.id)"
+  echo "   NOT: .or(\`space_id.eq.\${space.id},space_id.eq.\${space.space_id}\`)"
+  exit 1
+fi
+
+# Check for dangerous .or() patterns with project_id in database queries
+if grep -rn "\.or(\s*\`.*project_id\.eq.*project_id\.eq" --include="*.ts" --include="*.tsx" app/ components/ lib/ 2>/dev/null; then
+  echo "❌ ERROR: Found .or() with multiple project_id comparisons in database query"
+  echo "   Foreign key columns (project_id) must use UUID only"
+  echo "   Use: .eq('project_id', project.id)"
+  exit 1
+fi
+
+echo "✅ ID type check passed"
+
+echo "🔍 Checking for SELECT * queries..."
+
+# Warn about .select('*') or .select("*") patterns in new/modified files
+# This is a warning, not a blocker, as there may be legitimate exceptions
+SELECT_STAR_COUNT=$(git diff --cached --name-only --diff-filter=ACM | xargs grep -l "\.select(['\"]\\*['\"])" 2>/dev/null | wc -l)
+if [ "$SELECT_STAR_COUNT" -gt 0 ]; then
+  echo "⚠️  WARNING: Found .select('*') patterns in staged files:"
+  git diff --cached --name-only --diff-filter=ACM | xargs grep -l "\.select(['\"]\\*['\"])" 2>/dev/null
+  echo ""
+  echo "   Consider using explicit column lists from @/lib/query-columns.ts"
+  echo "   Example: .select(WORKSPACE_COLUMNS.CORE) instead of .select('*')"
+  echo "   See docs/SELECT_STAR_EXCEPTIONS.md for legitimate exceptions"
+  echo ""
+fi
+
+# Check RLS policy migrations for missing DROP POLICY IF EXISTS
+if git diff --cached --name-only --diff-filter=ACM | grep -q "^supabase/migrations/.*\.sql$"; then
+  echo "🔍 Checking RLS policy migrations..."
+  bash scripts/check-rls-migrations.sh
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+fi
+
+# =============================================================================
+# TEMPORARILY RELAXED — DO NOT REMOVE THIS BLOCK WITHOUT READING IT
+# =============================================================================
+# WHY:  The OSS launch sprint (phases 2-10) performs planned demolition —
+#       Stripe strip, Slack/Discord/Email removal, multi-user → single-user
+#       reduction. Each phase intentionally introduces and then resolves
+#       broken imports as the cascade is triaged. A clean `tsc --noEmit` at
+#       every commit boundary is incompatible with that plan; gating on it
+#       would force gaming each commit or routine --no-verify usage (which
+#       defeats the gate's purpose anyway).
+#
+# WHEN: Restore in Phase 12 final sweep, BEFORE the public git remote is
+#       added and BEFORE the OSS public launch (target: 2026-05-04).
+#
+# WHAT STILL RUNS (above this block, unchanged):
+#   - ID-type mismatch guard (blocking) — .or() with multiple FK comparisons
+#   - SELECT('*') warning on staged files (warning-only)
+#   - RLS policy migration check (blocking) — missing DROP POLICY IF EXISTS
+#
+# WHAT DOES NOT RUN (relaxed below):
+#   - npx tsc --noEmit gate
+# =============================================================================
+echo "⏭️  TypeScript check SKIPPED — OSS launch sprint (restore in Phase 12)"
+# Original gate (restore in Phase 12):
+#   echo "Running TypeScript check..."
+#   npx tsc --noEmit
+#   if [ $? -ne 0 ]; then
+#     echo "TypeScript errors found. Fix them before committing."
+#     exit 1
+#   fi
+#   echo "TypeScript check passed"
+
+

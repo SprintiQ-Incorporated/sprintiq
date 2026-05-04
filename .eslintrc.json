@@ -1,0 +1,45 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript"
+  ],
+  "plugins": ["local-rules"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_"
+      }
+    ],
+    "local-rules/no-raw-fetch-api": "warn",
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "TemplateLiteral[quasis.0.value.raw=/space_id\\.eq.*space_id\\.eq/]",
+        "message": "❌ Do not use .or() with space_id. Foreign keys must use UUID only: .eq('space_id', space.id)"
+      },
+      {
+        "selector": "TemplateLiteral[quasis.0.value.raw=/project_id\\.eq.*project_id\\.eq/]",
+        "message": "❌ Do not use .or() with project_id. Foreign keys must use UUID only: .eq('project_id', project.id)"
+      },
+      {
+        "selector": "CallExpression[callee.property.name='select'][arguments.0.value='*']",
+        "message": "⚠️ Avoid SELECT * queries. Use explicit column lists from @/lib/query-columns.ts for better performance. Example: .select(WORKSPACE_COLUMNS.CORE)"
+      },
+      {
+        "selector": "CallExpression[callee.property.name='select'][arguments.0.quasis.0.value.raw='*']",
+        "message": "⚠️ Avoid SELECT * queries. Use explicit column lists from @/lib/query-columns.ts for better performance. Example: .select(WORKSPACE_COLUMNS.CORE)"
+      }
+    ]
+  },
+  "ignorePatterns": [
+    "docs/**",
+    "**/*.md",
+    "IMPLEMENTATION_COMPLETE.md",
+    "CODEBASE_AUDIT_RECOMMENDATIONS.md",
+    "supabase/migrations/**"
+  ]
+}
