@@ -2,7 +2,7 @@
 
 > The product brain for Claude Code.
 
-SprintiQ Turbo is the planning layer that sits above Claude Code. While Claude Code writes the code, SprintiQ manages what gets built, when, and why — sprint planning, story generation, velocity tracking, and bidirectional sync with your AI coding agent. It's not a project management tool. It's the operating system for Claude Code workflows.
+SprintiQ Turbo is the agile planning & orchestration layer that sits above Claude Code. While Claude Code writes the code, SprintiQ manages what gets built, when, and why — sprint planning, multi-modal story generation, velocity tracking, and bidirectional sync with your AI coding agent. It's not a project management tool. It's the operating system for Claude Code workflows.
 
 This repository is provided as open source under the Apache 2.0 license. You can self-host, fork, and extend it freely.
 
