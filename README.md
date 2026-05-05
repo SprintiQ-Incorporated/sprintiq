@@ -51,16 +51,37 @@ After running `supabase db push`, create two storage buckets in your Supabase da
 | `avatars` | Yes | User profile photos |
 | `images` | No | Task and workspace image uploads |
 
-### CLI
+## CLI — `sprintiq watch`
+
+The CLI connects your local codebase to your SprintiQ workspace,tracking git activity and syncing it to your active sprint.
+
+### Install
 
 ```bash
 cd packages/cli
 npm install
 npm run build
 npm link
-sprintiq watch
-```
 
+### Authenticate
+
+Run this once from your project directory:
+
+sprintiq login
+
+You’ll be prompted for your API key. Find it in your SprintiQ workspace under the CLI settings.
+
+### Start watching
+From your project root (must contain a .git folder):
+
+sprintiq watch
+
+This tracks commits and maps them to sprint tasks in real time.
+
+### CLI Requirements
+	•	Must run from a git-initialized project directory
+	•	Requires an active sprint in your SprintiQ workspace
+	•	Node 18+
 ---
 
 ## Architecture
